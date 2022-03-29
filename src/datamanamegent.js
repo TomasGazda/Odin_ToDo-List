@@ -1,6 +1,6 @@
-import { Project,AllProjects } from "./project.js";
-import { TodoList,AllLists } from "./ToDoList.js";
-import { task,AllTasks } from "./Task.js";
+import { Project,AllProjects,setAllProjects } from "./project.js";
+import { TodoList,AllLists,setAllLists } from "./ToDoList.js";
+import { AllTasks,task,setAllTasks} from "./Task.js";
 
 //let Projects = require("./project.js")
 
@@ -30,28 +30,46 @@ function checkLocalStorage(){
     if(!CheckifExist("projects")){
         setupLocalStorage();
     }
-    AllLists = getallLists();
-    AllProjects = getallProjects();
-    AllTasks - getallTasks()
+    setAllLists(getallLists());
+    setAllProjects(getallProjects());
+    setAllTasks(getallTasks());
 }
 
 function getallLists(){
-    return JSON.parse(localStorage.getItem("lists"));
+    let JSONLists = JSON.parse(localStorage.getItem("lists"));
+    let lists = [];
+    for (let index = 0; index < JSONLists.length; index++) {
+        const element = JSON.parse(JSONLists[index]);     
+        let list = new TodoList(element.name,element.duedate,element.priority,element.notes,element.id);
+        lists.push(list)
+    }
+
+    return lists;
 }
 
 function getallProjects(){
-    let projects = JSON.parse(localStorage.getItem("projects"));
-    for (let index = 0; index < projects.length; index++) {
-        const element = JSON.parse(projects[index]);     
+    let JSONprojects = JSON.parse(localStorage.getItem("projects"));
+    let projects = [];
+    for (let index = 0; index < JSONprojects.length; index++) {
+        const element = JSON.parse(JSONprojects[index]);     
         let project = new Project(element.name,element.duedate,element.priority,element.notes,element.id);
-        
+        projects.push(project)
     }
+
     return projects;
     
 }
 
 function getallTasks(){
-    return JSON.parse(localStorage.getItem("tasks"));
+    let JSONTasks = JSON.parse(localStorage.getItem("tasks"));
+    let tasks = [];
+    for (let index = 0; index < JSONTasks.length; index++) {
+        const element = JSON.parse(JSONTasks[index]);     
+        let task = new task(element.name,element.duedate,element.priority,element.notes,element.id);
+        tasks.push(task)
+    }
+
+    return tasks;
 
 }
 

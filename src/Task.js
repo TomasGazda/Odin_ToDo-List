@@ -1,6 +1,6 @@
 import {v4 as uuidv4} from 'uuid';
 
-let AllTasks;
+let AllTasks = [];
 
 class task {
 
@@ -60,4 +60,26 @@ class task {
         this.done = newDone;
     }
 }
-export{task,AllTasks};
+
+function addTask(newTask){
+    AllProjects.push(newTask); 
+
+}
+function getTask(id){
+    return AllTasks.find(obj => obj.id === id);
+    
+
+}
+function deleteTask(id){
+    AllTasks = AllTasks.find(obj => obj.id !== id);
+
+}
+function updateTask(Task){
+    elementIndex = AllTasks.findIndex((obj => obj.id == 1));
+    AllTasks[elementIndex] = Task;
+}
+
+function setAllTasks(array){
+    AllTasks = array;
+}
+export{task,AllTasks,addTask,getTask,deleteTask,updateTask,setAllTasks};

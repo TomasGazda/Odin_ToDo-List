@@ -1,6 +1,6 @@
 import {v4 as uuidv4} from 'uuid';
 
-let AllProjects;
+let AllProjects = [];
 
 class Project{
 
@@ -63,5 +63,25 @@ function createDefaultProject(){
     return defaultProject;
 
 }
+function addProject(newProject){
+    AllProjects.push(newProject); 
 
-export{Project,createDefaultProject,AllProjects};
+}
+function getProject(id){
+    return AllProjects.find(obj => obj.id === id);
+    
+
+}
+function deleteProject(id){
+    AllProjects = AllProjects.find(obj => obj.id !== id);
+
+}
+function updateProject(Project){
+    elementIndex = AllProjects.findIndex((obj => obj.id == 1));
+    AllProjects[elementIndex] = Project;
+}
+function setAllProjects(array){
+    AllProjects = array;
+}
+
+export{Project,createDefaultProject,AllProjects,addProject,getProject,deleteProject,updateProject,setAllProjects};

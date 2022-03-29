@@ -1,69 +1,90 @@
 import {v4 as uuidv4} from 'uuid';
+import { AllTasks } from './Task';
 
-let AllLists;
+let AllLists = [];
 
 class TodoList{
-    #id;
-    #project;
-    #name;
-    #dueDate;
-    #priority;
-    #note;
-    #done;
+    id;
+    project;
+    name;
+    dueDate;
+    priority;
+    note;
+    done;
 
         constructor(project_id,TodoList_name,list_duedate=new Date(0),priority=1,note=""){
-            this.#id = uuidv4();
-            this.#project = project_id;
-            this.#name = TodoList_name;
-            this.#dueDate = list_duedate;
-            this.#priority = priority;
-            this.#note = note;
-            this.#done = false;
+            this.id = uuidv4();
+            this.project = project_id;
+            this.name = TodoList_name;
+            this.dueDate = list_duedate;
+            this.priority = priority;
+            this.note = note;
+            this.done = false;
 
 
         }
 
         getListID() {
-            return this.#id;
+            return this.id;
         }
         getListProject(){
-             return this.#project;
+             return this.project;
          }
          setListProject(project_id){
-             this.#project = project_id;
+             this.project = project_id;
          }
         getListName(){
-            return this.#name;
+            return this.name;
         }
         setListName(list_name){
-            this.#name = list_name;
+            this.name = list_name;
         }
         getListdueDate(){
-            return this.#dueDate;
+            return this.dueDate;
         }
         setListDueDate(list_duedate){
-            this.#dueDate = list_duedate;
+            this.dueDate = list_duedate;
         }
         getListPriority(){
-            return this.#priority;
+            return this.priority;
         }
         setListPriority(list_priority){
-            this.#priority = list_priority;
+            this.priority = list_priority;
         }
         getListNote(){
-            return this.#note;
+            return this.note;
         }
         setListNotes(list_note){
-            this.#note = list_note;
+            this.note = list_note;
         }
         getListDone(){
-            return this.#done;
+            return this.done;
         }
         setListDone(list_done){
-            this.#done = list_done;
+            this.done = list_done;
         }
 
 
 }
+function addList(newList){
+    AllLists.push(newList); 
 
-export {TodoList,AllLists};
+}
+function getList(id){
+    return AllLists.find(obj => obj.id === id);
+    
+
+}
+function deleteList(id){
+    AllLists = AllLists.find(obj => obj.id !== id);
+
+}
+function updateList(List){
+    elementIndex = AllLists.findIndex((obj => obj.id == 1));
+    AllLists[elementIndex] = List;
+}
+function setAllLists(array){
+    AllLists = array;
+}
+
+export {TodoList,AllLists,addList,getList,deleteList,updateList,setAllLists};

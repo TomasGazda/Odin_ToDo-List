@@ -12,8 +12,8 @@ class task {
     notes;
     done;
 
-    constructor(task_name,task_list,task_dueDate= new Date(0),task_priority = 1,task_notes=''){
-        this.id = uuidv4();
+    constructor(task_name,task_list,task_dueDate= new Date(0),task_priority = 1,task_notes='',id=uuidv4()){
+        this.id = id;
         this.name = task_name,
         this.todolist = task_list;
         this.dueDate = task_dueDate;
@@ -82,4 +82,9 @@ function updateTask(Task){
 function setAllTasks(array){
     AllTasks = array;
 }
-export{task,AllTasks,addTask,getTask,deleteTask,updateTask,setAllTasks};
+
+function getListTasks(list){
+    return AllTasks.find(obj => obj.todolist === list);
+    
+}
+export{task,AllTasks,addTask,getTask,deleteTask,updateTask,setAllTasks,getListTasks};

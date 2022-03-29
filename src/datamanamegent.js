@@ -40,7 +40,7 @@ function getallLists(){
     let lists = [];
     for (let index = 0; index < JSONLists.length; index++) {
         const element = JSON.parse(JSONLists[index]);     
-        let list = new TodoList(element.name,element.duedate,element.priority,element.notes,element.id);
+        let list = new TodoList(element.project,element.name,element.duedate,element.priority,element.notes,element.id);
         lists.push(list)
     }
 
@@ -65,7 +65,7 @@ function getallTasks(){
     let tasks = [];
     for (let index = 0; index < JSONTasks.length; index++) {
         const element = JSON.parse(JSONTasks[index]);     
-        let task = new task(element.name,element.duedate,element.priority,element.notes,element.id);
+        let task = new task(element.name,element.todolist,element.duedate,element.priority,element.notes,element.id);
         tasks.push(task)
     }
 

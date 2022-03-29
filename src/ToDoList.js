@@ -12,8 +12,8 @@ class TodoList{
     note;
     done;
 
-        constructor(project_id,TodoList_name,list_duedate=new Date(0),priority=1,note=""){
-            this.id = uuidv4();
+        constructor(project_id,TodoList_name,list_duedate=new Date(0),priority=1,note="",id=uuidv4()){
+            this.id = id;
             this.project = project_id;
             this.name = TodoList_name;
             this.dueDate = list_duedate;
@@ -86,5 +86,9 @@ function updateList(List){
 function setAllLists(array){
     AllLists = array;
 }
+function getProjectLists(project){
+    return AllLists.find(obj => obj.project === project);
+    
+}
 
-export {TodoList,AllLists,addList,getList,deleteList,updateList,setAllLists};
+export {TodoList,AllLists,addList,getList,deleteList,updateList,setAllLists,getProjectLists};

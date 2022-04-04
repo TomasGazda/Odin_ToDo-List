@@ -36,7 +36,13 @@ class task {
         this.name = newName;
     }
     getdueDate(){
-        return this.dueDate;
+        const Duedate = new Date(this.dueDate);
+        
+        if (Duedate.getFullYear() <= 1970){
+            return "No Due Date"
+        }
+       
+        return format(Duedate, 'dd MMM yyyy') ;
     }
     setdueDate(newDueDate){
         this.dueDate = newDueDate;
@@ -84,7 +90,11 @@ function setAllTasks(array){
 }
 
 function getListTasks(list){
-    return AllTasks.find(obj => obj.todolist === list);
+    let result = AllTasks.find(obj => obj.todolist === list);
+    if (typeof result ==="undefined"){
+        return[];
+    }
+    return result;
     
 }
 export{task,AllTasks,addTask,getTask,deleteTask,updateTask,setAllTasks,getListTasks};

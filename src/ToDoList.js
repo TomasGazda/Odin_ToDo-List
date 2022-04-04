@@ -40,7 +40,13 @@ class TodoList{
             this.name = list_name;
         }
         getListdueDate(){
-            return this.dueDate;
+            const Duedate = new Date(this.dueDate);
+        
+        if (Duedate.getFullYear() <= 1970){
+            return "No Due Date"
+        }
+       
+        return format(Duedate, 'dd MMM yyyy') ;
         }
         setListDueDate(list_duedate){
             this.dueDate = list_duedate;
@@ -87,7 +93,11 @@ function setAllLists(array){
     AllLists = array;
 }
 function getProjectLists(project){
-    return AllLists.find(obj => obj.project === project);
+    let result = AllLists.find(obj => obj.project === project);
+    if (typeof result ==="undefined"){
+        return[];
+    }
+    return result;
     
 }
 

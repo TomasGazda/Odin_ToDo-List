@@ -1,4 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
+import format from 'date-fns/format'
 
 let AllProjects = [];
 
@@ -26,7 +27,16 @@ done;
         this.name = newName;
     }
     getProject_DueDate(){
-        return this.duedate;
+        const Duedate = new Date(this.duedate);
+        
+        if (Duedate.getFullYear() <= 1970){
+            return "No Due Date"
+        }
+       
+        return format(Duedate, 'dd MMM yyyy') ;
+       
+        
+       
     }
     setProject_DueDate(newDueDate){
         this.duedate = newDueDate;
@@ -76,9 +86,9 @@ function deleteProject(id){
     AllProjects = AllProjects.find(obj => obj.id !== id);
 
 }
-function updateProject(Project){
-    elementIndex = AllProjects.findIndex((obj => obj.id == 1));
-    AllProjects[elementIndex] = Project;
+function updateProject(updProject){
+    let elementIndex = AllProjects.findIndex(obj => obj.id == updProject.getProject_ID());
+    AllProjects[elementIndex] = updProject;
 }
 function setAllProjects(array){
     AllProjects = array;

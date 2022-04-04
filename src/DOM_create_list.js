@@ -2,12 +2,13 @@
 import { TodoList } from "./ToDoList"
 import { getListTasks,task } from "./Task";
 import { createTaskElement } from "./DOM_create_task";
+import { addDays, format } from 'date-fns/fp'
 
 function createListCard(ToDoList){
     let container = document.createElement("div");
     container.classList.add("col-sm-12", "col-md-6", "col-lg-4", "bg-transparent", "d-flex", "justify-content-center");
     let card = document.createElement("div");
-    let card_body = ducument.createElement('div');
+    let card_body = document.createElement('div');
     let list = document.createElement('ul');
     card.classList.add("card");
     card.setAttribute("data-id",ToDoList.getListID());
@@ -18,16 +19,16 @@ function createListCard(ToDoList){
 
     card.innerHTML = `
     <div class="card-header bg-transparent">
-    <div class="d-flex justify-content-between inline-block"> 
+    <div class="d-flex justify-content-between inline-block mb-3"> 
         <h5 class="align-middle mb-0 pt-2">`+ToDoList.getListName()+`</h5>
         <div class="btn-group">
             <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 &#10247;
             </button>
             <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Update list</a></li>
-            <li><a class="dropdown-item" href="#">Close list</a></li>
-            <li><a class="dropdown-item" href="#">Add Task</a></li>
+            <li><button class="dropdown-item update_list" >Update list</button></li>
+            <li><button class="dropdown-item close_list" >Close list</button></li>
+            <li><button class="dropdown-item add_task" >Add Task</button></li>
             </ul>
         </div>
 

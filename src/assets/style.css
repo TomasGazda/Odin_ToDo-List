@@ -44,8 +44,14 @@ body{
     padding:0 !important;
 }
 .card{
+    margin: 0 auto;
     width:95%
 }
+.badge:focus{
+    outline-color: transparent!;
+    outline-style: none;
+}
+
 
 .dropdown-toggle::after {
     content: none;

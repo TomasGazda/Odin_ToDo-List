@@ -90,7 +90,7 @@ function setAllTasks(array){
 }
 
 function getListTasks(list){
-    let result = AllTasks.find(obj => obj.todolist === list);
+    let result = AllTasks.filter(obj => obj.todolist === list);
     if (typeof result ==="undefined"){
         return[];
     }

@@ -1,9 +1,10 @@
 import { checkLocalStorage} from "./datamanamegent.js";
 import "./assets/style.css";
-import {createListCard} from "./DOM_create_list.js";
-import {createProjectCard} from "./DOM_create_project.js";
-import {AllLists} from "./ToDoList.js";
-import {AllProjects,getProject,Project,updateProject,addProject} from "./project.js";
+import {createListCard,create_list_options,createListitem} from "./DOM_create_list.js";
+import {createProjectCard,create_project_options} from "./DOM_create_project.js";
+import {AllLists,getList,TodoList,updateList,addList,closeList,getProjectLists} from "./ToDoList.js";
+import {AllProjects,getProject,Project,updateProject,addProject,close_project} from "./project.js";
+
 
 
 
@@ -13,6 +14,8 @@ import {AllProjects,getProject,Project,updateProject,addProject} from "./project
 $( document ).ready(function() {
     checkLocalStorage();
     createProjectpage();
+    create_project_options(document.getElementById('project_select'));
+    create_list_options(document.getElementById('list_select'));
     $("#cards").on('click', ".update_project", function() {
         let id = $(this).closest('.card').attr('data-id');
         let project = getProject(id);
@@ -30,6 +33,70 @@ $( document ).ready(function() {
 
         $("#projectModal").modal("show");
     });
+    $("#cards").on('click', '.badge', function(e) {
+        var exampleTriggerEl = e.target;
+        var popover = bootstrap.Popover.getOrCreateInstance(exampleTriggerEl,{trigger:'focus'});
+        popover.show()
+
+    });
+    $("#cards").on('click', ".add_list", function() {
+        
+        let id = $(this).closest('.card').attr('data-id');
+        const $select = document.querySelector('#project_select');
+        const $options = Array.from($select.options);
+        const optionToSelect = $options.find(item => item.value ===id);
+        optionToSelect.selected = true;
+        $("#listModal").modal("show");
+    });
+    $("#cards").on('click', ".close_project", function() {
+        
+        let id = $(this).closest('.card').attr('data-id');
+        close_project(id);
+    });
+    $("#cards").on('click', ".add_task", function() {
+        let id = $(this).closest('.card').attr('data-id');
+        const $select = document.querySelector('#list_select');
+        const $options = Array.from($select.options);
+        const optionToSelect = $options.find(item => item.value ===id);
+        optionToSelect.selected = true;
+        $("#taskModal").modal("show");
+    });
+    $("#cards").on('click', ".update_list", function() {
+        let id = $(this).closest('.card').attr('data-id');
+        let list = getList(id);
+        $('#listModal').attr('data-id',id);
+        $('#list_name').val(list.getListName());
+        $('#list_priority').val(list.getListPriority());
+        if(project.getListdueDate()=="No Due Date"){
+            $('#list_due_date').prop('disabled', true);
+            $('#list_not_required').prop('checked', true);
+        }
+        else{
+            $('#list_due_date').val(list.getListdueDate());
+        }
+        $('#list_notes').val(list.getListNote());
+        $('#project_select').val(list.getListProject());
+
+        $("#listModal").modal("show");
+
+    });
+    $("#cards").on('click', ".close_list", function() {
+        let id = $(this).closest('.card').attr('data-id');
+        closeList(id);
+    });
+    $("#cards").on('click', ".project_name", function() {
+        let id = $(this).closest('.card').attr('data-id');
+        $('#cards').html('');
+        createProjectDetailPage(id);
+    });
+    $("#cards").on('click', ".detail_list", function() {
+        let id = $(this).closest('checkbox').id;
+        $('#cards').html('');
+        createListPage(id);
+    });
+
+
+
 
     $("#save_project").click(function (e) { 
         event.stopPropagation();
@@ -38,13 +105,12 @@ $( document ).ready(function() {
         let id = $('#projectModal').attr('data-id');
         
         if(id !== undefined){
-            let id = $('#projectModal').attr('data-id');
             let project = getProject($('#projectModal').attr('data-id'));
             let card = $('.card[data-id="'+id+'"]'); 
            
             
             project.setProject_Name($("#project_name").val());
-            $('.card[data-id="'+id+'"]').find(".name").text($("#project_name").val());
+            $('.card[data-id="'+id+'"]').find(".project_name").text($("#project_name").val());
             project.setProject_Priority($("#project_priority").val());
             project.setProject_Notes($("#project_notes").val());
             $('.card[data-id="'+id+'"]').find(".notes").text($("#project_notes").val());
@@ -73,39 +139,134 @@ $( document ).ready(function() {
             createProjectpage();
             
 
-        }   
+        }  
+        document.getElementById('project_select').innerHTML ='';
+        create_project_options(document.getElementById('project_select')); 
     });
+
+
+    $('#save_list').on('click',function(e){
+        let id = $('#listModal').attr('data-id');      
+            if(id !== undefined){
+                let list = getList(id);
+                if($('.card[data-id="'+id+'"]').length){
+                    $('.card[data-id="'+id+'"]').find(".list_name").text($("#list_name").val());
+                    $('.card[data-id="'+id+'"]').find(".notes").text($("#list_notes").val());
+    
+                    if($('#list_not_required').is("checked")){
+                        $('.card[data-id="'+id+'"]').find(".due_date").text("Due Date: No Due Date");
+                    }else{
+                        $('.card[data-id="'+id+'"]').find(".due_date").text("Due Date: "+$("#list_due_date").val());
+                    }
+    
+                }
+    
+                list.setListName($('#list_name').val());
+               
+                list.setListProject($('#project_select').val());
+                list.setListPriority($('#list_priority').val());
+                list.setListNotes($('#list_notes').val());
+                
+                if($('#list_not_required').is("checked")){
+                    list.setListDueDate(new Date(0));
+                    
+    
+                }else{
+                    list.setListDueDate($('#list_due_date').val());
+                   
+                }
+                updateList(list);
+                clearListModal();
+                createProjectpage();
+
+    
+             }else{
+                let due_date;
+                if($('#list_not_required').is(":checked")){
+                    due_date = new Date(0);
+                }else{
+                   due_date = $("#list_due_date").val();
+                }
+                let list = new TodoList($('#project_select').val(),$('#list_name').val(),due_date,$('#list_priority').val(),$('#list_notes').val());
+               
+                addList(list);
+                clearListModal();
+                if($("#lists_"+$('#project_select').val()).length){
+                    $('#cards').html('');
+                    createProjectpage();
+    
+                }else{
+                    $('#cards').html('');
+                    createListPage();
+    
+                }
+    
+    
+            }
+            document.getElementById('list_select').innerHTML ='';
+            create_list_options(document.getElementById('list_select')); 
+    
+    });  
+    $('#save_task').on('click',function(e){
+        let id = $('#taskModal').attr('data-id');      
+            if(id !== undefined){
+                let task = getList(id);
+                
+                if($('#task_not_required').is("checked")){
+                              
+                }else{
+                    
+                }
+        
+
+    
+             }else{
+                let due_date;
+                if($('#task_not_required').is(":checked")){
+                    due_date = new Date(0);
+                }else{
+                   due_date = $("#task_due_date").val();
+                }
+                let task = new task();
+               
+    
+    
+            }
+    
+    });  
+
+
 
     $('#project_not_required').on('click',function(){
         if($('#project_not_required').is(":checked")){
-            $("#project_not_required").prop('checked',false);
-            $("#project_due_date").prop('disabled', false);
+           
+            $("#project_due_date").prop('disabled', true);
     
         }else{
-            $("#project_not_required").prop('checked',true);
-            $("#project_due_date").prop('disabled', true);
+            
+            $("#project_due_date").prop('disabled', false);
     
         }
      });
      $('#list_not_required').on('click',function(){
-        if($('#list_not_required').is(":checked")){
-            $("#list_not_required").prop('checked',false);
-            $("#list_due_date").prop('disabled', false);
+        if($('#list_not_required').is("checked")){
+            
+            $("#list_due_date").prop('disabled', true);
     
         }else{
-            $("#list_not_required").prop('checked',true);
-            $("#list_due_date").prop('disabled', true);
+           
+            $("#list_due_date").prop('disabled', false);
     
         }
      });
      $('#task_not_required').on('click',function(){
         if($('#task_not_required').is(":checked")){
-            $("#task_not_required").prop('checked',false);
-            $("#task_due_date").prop('disabled', false);
+           
+            $("#task_due_date").prop('disabled', true);
     
         }else{
-            $("#task_not_required").prop('checked',true);
-            $("#task_due_date").prop('disabled', true);
+          
+            $("#task_due_date").prop('disabled', false);
     
         }
      });
@@ -125,33 +286,45 @@ $( document ).ready(function() {
 
 
 
- //end of on load function   
+ //end of document ready function   
 });
 
-function createProjectpage(){
+
+
+
+
+function createProjectpage(id =0){
     for (let index = 0; index < AllProjects.length; index++) {
         const element = AllProjects[index];
-        $('#cards').append(createProjectCard (element));   
+        if((id ==0 && element.getProject_Done()== false) || (id!=0 && id==element.getProject_ID())){
+            $('#cards').append(createProjectCard (element));   
+        }
     }
 
 }
 
-function createListPage(){
+function createListPage(id=0){
     for (let index = 0; index < AllLists.length; index++) {
         const element = AllLists[index];
-        $('#cards').append(createListCard (element));   
+        if((id ==0 && element.getListDone()==false) || (id !=0 && element.getListID()==id)){
+            $('#cards').append(createListCard (element));   
+        }
     }
 }
 
+function createProjectDetailPage(projectid){
+    let lists_project = getProjectLists(projectid);
+    for (let index = 0; index < lists_project.length; index++) {
+        const element = lists_project[index];    
+        $('#cards').append(createListCard (element));   
+    }
 
-$('.close_project').click(function (e) { 
-    e.preventDefault();
-    
-});
-$('.add_list').click(function (e) { 
-    e.preventDefault();
-    
-});
+
+}
+
+
+
+
  function clearProjectModal(){
     $('#projectModal').removeAttr("data-id");
     $('#projectModal').modal('hide');
@@ -161,6 +334,28 @@ $('.add_list').click(function (e) {
     $("#project_due_date").val(new Date());
     $("#project_not_required").prop('checked',false);
  }
+
+ function clearListModal(){
+    $('#listModal').removeAttr("data-id");
+    $('#listModal').modal('hide');
+    $("#list_name").val('');
+    $("#list_priority").val('');
+    $("#list_notes").val('');
+    $("#list_due_date").val(new Date());
+    $("#list_not_required").prop('checked',false);
+
+ }
+
+ $('#list_view').on('click',function(){
+    $('#cards').html('');
+    createListPage();
+ });
+
+ $('#project_view').on('click',function(){
+    $('#cards').html('');
+    createProjectpage();
+ });
+ 
  
 
 

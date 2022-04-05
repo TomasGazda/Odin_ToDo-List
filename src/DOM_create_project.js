@@ -1,5 +1,5 @@
 
-import { Project } from "./project";
+import { Project,AllProjects } from "./project";
 import { getProjectLists,TodoList } from "./ToDoList";
 import { createListitem } from "./DOM_create_list";
 
@@ -7,7 +7,7 @@ import { createListitem } from "./DOM_create_list";
 
 function createProjectCard(project){
     let container = document.createElement("div");
-    container.classList.add("col-sm-12", "col-md-6", "col-lg-4", "bg-transparent", "d-flex", "justify-content-center");
+    container.classList.add("col-sm-12", "col-md-6", "col-lg-4", "bg-transparent", "justify-content-center");
     let card = document.createElement("div");
     let card_body = document.createElement('div');
     let list = document.createElement('ul');
@@ -16,13 +16,14 @@ function createProjectCard(project){
     card.setAttribute("data-type",'project');
     card_body.classList.add("card-body");
     list.classList.add("list-group","list-group-flush");
+    list.id = "lists_"+project.getProject_ID();
     
 
 
     card.innerHTML = `
     <div class="card-header bg-transparent">
     <div class="d-flex justify-content-between inline-block mb-3"> 
-        <h5 class="align-middle mb-0 pt-2 name">`+project.getProject_Name()+`</h5>
+        <h5 class="align-middle mb-0 pt-2 project_name">`+project.getProject_Name()+`</h5>
         <div class="btn-group">
             <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 &#10247;
@@ -58,4 +59,22 @@ function createProjectCard(project){
     
 }
 
-export{createProjectCard};
+function create_project_options(select_DOM){
+    let projects = AllProjects;
+    for (let index = 0; index < projects.length; index++) {
+        const element = projects[index];
+        let option = document.createElement("option");
+        option.value = element.getProject_ID();
+        option.text = element.getProject_Name();
+        if( element.getProject_Name() == "Default"){
+            option.selected = true;
+        }
+        
+        select_DOM.appendChild(option);
+
+        
+    }
+}
+
+
+export{createProjectCard,create_project_options};

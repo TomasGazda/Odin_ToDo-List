@@ -1,5 +1,6 @@
 import {v4 as uuidv4} from 'uuid';
 import format from 'date-fns/format'
+import {TodoList,getProjectLists,closeList} from './ToDoList.js'
 
 let AllProjects = [];
 
@@ -93,5 +94,21 @@ function updateProject(updProject){
 function setAllProjects(array){
     AllProjects = array;
 }
+function close_project(id){
+    let project = getProject(id);
+    project.setProject_Done(true);
+    updateProject(project);
+    let lists = getProjectLists(id);
+    for (let index = 0; index < lists.length; index++) {
+        const element = lists[index];
+        closeList(element.getListID());
+    }
+    
 
-export{Project,createDefaultProject,AllProjects,addProject,getProject,deleteProject,updateProject,setAllProjects};
+
+}
+
+
+
+
+export{Project,createDefaultProject,AllProjects,addProject,getProject,deleteProject,updateProject,setAllProjects,close_project};

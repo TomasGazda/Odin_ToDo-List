@@ -1,5 +1,6 @@
 import {v4 as uuidv4} from 'uuid';
-import { AllTasks } from './Task';
+import { AllTasks,getListTasks } from './Task';
+import format from 'date-fns/format'
 
 let AllLists = [];
 
@@ -93,12 +94,26 @@ function setAllLists(array){
     AllLists = array;
 }
 function getProjectLists(project){
-    let result = AllLists.find(obj => obj.project === project);
+    let result = AllLists.filter(obj => obj.project === project);
     if (typeof result ==="undefined"){
         return[];
     }
     return result;
     
 }
+function closeList(id){
+    let list = getList(id);
+    list.setListDone(true);
+    updateList(list)
+    let tasks = getListTasks(id);
+    for (let index = 0; index < tasks.length; index++) {
+        const element = tasks[index];
+        element.setDone(true);
+        updateTask(element);
+        
+    }
 
-export {TodoList,AllLists,addList,getList,deleteList,updateList,setAllLists,getProjectLists};
+
+}
+
+export {TodoList,AllLists,addList,getList,deleteList,updateList,setAllLists,getProjectLists,closeList};

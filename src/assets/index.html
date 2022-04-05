@@ -9,12 +9,20 @@
     <title>ToDos</title>
 
 </head>
-<body class= "d-flex align-items-stretch" style="width:100vw;height:100vh">
+<body class= "d-flex " style="width:100vw;height:100vh">
     <div id="content">
         <div id ="topbar"></div>
         <div id="sidebar">
             <button class="btn"data-bs-toggle="modal" data-bs-target="#projectModal">
                 Create new Project</button>
+            <button class="btn"data-bs-toggle="modal" data-bs-target="#listModal">
+                  Create new List</button>
+           <button class="btn"data-bs-toggle="modal" data-bs-target="#taskModal">
+                    Create new Task</button>
+            <button class="btn" id="list_view">
+                  List View</button>
+                  <button class="btn" id="project_view">
+                    Project View</button>
         </div>
         <div id ="main" >
             <div id="cards" class="row gx-0 gy-2 " data-masonry='{"percentPosition":true}'>
@@ -84,8 +92,8 @@
                     <input type="text" class="form-control" id="list_name" placeholder="List One">
                   </div>
                   <div class="mb-3">
+                    <label for="project_select" class="form-label">Project</label>
                     <select class="form-select" id="project_select" aria-label="Select Project">
-                        <option selected>Select Project</option>
                       </select>
                   </div>
 
@@ -111,7 +119,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save</button>
+              <button type="button" id="save_list" class="btn btn-primary">Save</button>
             </div>
           </div>
         </div>
@@ -131,8 +139,9 @@
                     <input type="text" class="form-control" id="task_name" placeholder="Do Dishes">
                   </div>
                   <div class="mb-3">
+                    <label for="list_select" class="form-label">List</label>
                     <select class="form-select" id="list_select" aria-label="Select List">
-                        <option selected>Select List</option>
+                        
                       </select>
                   </div>
 
@@ -158,7 +167,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Save</button>
+              <button type="button" id="save_task"class="btn btn-primary">Save</button>
             </div>
           </div>
         </div>
@@ -167,6 +176,7 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script   src="https://code.jquery.com/jquery-3.6.0.min.js"   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="   crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>    
     <script>
         var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
@@ -175,6 +185,6 @@
         });
         
     </script>
-    <script   src="https://code.jquery.com/jquery-3.6.0.min.js"   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="   crossorigin="anonymous"></script>
+   
 </body>
 </html>

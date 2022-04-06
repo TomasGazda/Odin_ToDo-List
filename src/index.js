@@ -2,8 +2,10 @@ import { checkLocalStorage} from "./datamanamegent.js";
 import "./assets/style.css";
 import {createListCard,create_list_options,createListitem} from "./DOM_create_list.js";
 import {createProjectCard,create_project_options} from "./DOM_create_project.js";
+import { createTaskElement } from "./DOM_create_task.js";
 import {AllLists,getList,TodoList,updateList,addList,closeList,getProjectLists} from "./ToDoList.js";
 import {AllProjects,getProject,Project,updateProject,addProject,close_project} from "./project.js";
+import {task,getTask,updateTask,addTask} from './Task.js'
 
 
 
@@ -99,9 +101,10 @@ $( document ).ready(function() {
 
 
     $("#save_project").click(function (e) { 
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        e.preventDefault();
+       if(EmptyDate()){
+        $("#project_feedback").css('display','inline-block');
+       }else{
+
         let id = $('#projectModal').attr('data-id');
         
         if(id !== undefined){
@@ -142,10 +145,16 @@ $( document ).ready(function() {
         }  
         document.getElementById('project_select').innerHTML ='';
         create_project_options(document.getElementById('project_select')); 
+
+      }
     });
 
 
     $('#save_list').on('click',function(e){
+        if(EmptyDate()){
+            $("#list_feedback").css('display','inline-block');
+
+        }else{
         let id = $('#listModal').attr('data-id');      
             if(id !== undefined){
                 let list = getList(id);
@@ -205,18 +214,33 @@ $( document ).ready(function() {
             }
             document.getElementById('list_select').innerHTML ='';
             create_list_options(document.getElementById('list_select')); 
-    
+        }
     });  
     $('#save_task').on('click',function(e){
+        if(EmptyDate()){
+            $("#task_feedback").css('display','inline-block');
+
+        }else{
         let id = $('#taskModal').attr('data-id');      
             if(id !== undefined){
-                let task = getList(id);
+                let task = getTask(id);
+                task.setName($("#task_name").val());
+                $("#label_"+id).val($("#task_name").val());
+                task.setPriority($("#task_priority").val());
+                task.setList($("#list_select").val());
+                task.setNotes($("#task_notes").val());
+                $("#span_"+id).attr('data-bs-content',$("#task_notes").val());
                 
                 if($('#task_not_required').is("checked")){
+                    task.setdueDate(new Date(0));
+                    $("#date_"+id).val(task.getdueDate());
                               
                 }else{
-                    
+                    task.setdueDate($("#task_due_date").val());
+                    $("#date_"+id).val(task.getdueDate());   
                 }
+                updateTask(task);
+                cleartaskModal();
         
 
     
@@ -227,12 +251,16 @@ $( document ).ready(function() {
                 }else{
                    due_date = $("#task_due_date").val();
                 }
-                let task = new task();
+                let task = new task($("#task_name").val(),$("#list_select").val(),due_date,$("#task_priority").val(),$("#task_notes").val());
+                addTask(task);
+                createListPage();
+                
+                
                
     
     
             }
-    
+        }
     });  
 
 
@@ -270,17 +298,16 @@ $( document ).ready(function() {
     
         }
      });
-     $('projectModal').on('show.bs.modal',function(){
-        $("#project_due_date").val(new Date());
-    
+     
+
+     $('#projectModal').on('hidden.bs.modal',function(){
+        clearProjectModal();
      });
-     $('listModal').on('show.bs.modal',function(){
-        $("#project_due_date").val(new Date());
-    
+     $('#listModal').on('hidden.bs.modal',function(){
+        clearListModal();
      });
-     $('taskModal').on('show.bs.modal',function(){
-        $("#project_due_date").val(new Date());
-    
+     $('#taskModal').on('hidden.bs.modal',function(){
+        cleartaskModal();
      });
 
 
@@ -333,6 +360,8 @@ function createProjectDetailPage(projectid){
     $("#project_notes").val('');
     $("#project_due_date").val(new Date());
     $("#project_not_required").prop('checked',false);
+    $("#project_feedback").css('display','none');
+
  }
 
  function clearListModal(){
@@ -343,6 +372,21 @@ function createProjectDetailPage(projectid){
     $("#list_notes").val('');
     $("#list_due_date").val(new Date());
     $("#list_not_required").prop('checked',false);
+    $("#list_feedback").css('display','none');
+
+
+ }
+
+ function cleartaskModal(){
+    $('#taskModal').removeAttr("data-id");
+    $('#taskModal').modal('hide');
+    $("#task_name").val('');
+    $("#task_priority").val('');
+    $("#task_notes").val('');
+    $("#task_due_date").val(new Date());
+    $("#task_not_required").prop('checked',false);
+    $("#task_feedback").css('display','none');
+
 
  }
 
@@ -355,6 +399,13 @@ function createProjectDetailPage(projectid){
     $('#cards').html('');
     createProjectpage();
  });
+
+ function EmptyDate(){
+     if(($('#list_not_required').is(":checked")||($('#list_due_date').val()==''))&&($('#task_not_required').is(":checked")||($('#task_due_date').val()==''))&&($('#project_not_required').is(":checked")||($('#project_due_date').val()==''))){
+         return true;
+     }
+     return false;
+ }
  
  
 

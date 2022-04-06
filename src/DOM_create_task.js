@@ -17,17 +17,19 @@ function createTaskElement(pTask){
     checkbox.id = pTask.getid();
     checkbox.type = "checkbox";
     checkbox.checked = pTask.getDone();
-    label.classList.add("form-check-label");
-    label.htmlFor = checkbox.id;
+    label.classList.add("form-check-label","detail_task");
     span.classList.add("badge " ,"rounded-pill" ,"bg-transparent", "text-dark");
     span.setAttribute('data-bs-toggle','popover');
     span.setAttribute('data-bs-trigger','hover');
     span.setAttribute('data-bs-content',pTask.getNotes());
+    span.id = 'span'+pTask.getid();
     date.classList.add("inline");
 
     label.innerHTML = pTask.getName();
+    label.id = 'label_'+pTask.getid();
     span.innerHTML = "&#9432;";
     date.innerHTML = pTask.getdueDate();
+    date.id = 'date_'+pTask.getid();
 
     label.appendChild(span);
     form.appendChild(checkbox);

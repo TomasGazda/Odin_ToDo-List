@@ -71,7 +71,7 @@ function createListitem(List){
     item.classList.add("list-group-item", "p-0");
     container.classList.add("d-flex", "justify-content-between");
     form.classList.add("form-check-inline");
-    checkbox.classList.add("inline","form-check-input");
+    checkbox.classList.add("inline","form-check-input",'list_checkbox');
     checkbox.id = List.getListID();
     checkbox.type = "checkbox";
     checkbox.checked = List.getListDone();

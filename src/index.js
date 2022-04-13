@@ -1,4 +1,4 @@
-import { checkLocalStorage} from "./datamanamegent.js";
+import { checkLocalStorage,closeSession} from "./datamanamegent.js";
 import "./assets/style.css";
 import {createListCard,create_list_options,createListitem} from "./DOM_create_list.js";
 import {createProjectCard,create_project_options} from "./DOM_create_project.js";
@@ -13,9 +13,10 @@ import {task,getTask,updateTask,addTask} from './Task.js'
 
 
 
+
 $( document ).ready(function() {
     checkLocalStorage();
-    createProjectpage();
+    createListPage();
     create_project_options(document.getElementById('project_select'));
     create_list_options(document.getElementById('list_select'));
     $("#cards").on('click', ".update_project", function() {
@@ -69,7 +70,7 @@ $( document ).ready(function() {
         $('#listModal').attr('data-id',id);
         $('#list_name').val(list.getListName());
         $('#list_priority').val(list.getListPriority());
-        if(project.getListdueDate()=="No Due Date"){
+        if(list.getListdueDate()=="No Due Date"){
             $('#list_due_date').prop('disabled', true);
             $('#list_not_required').prop('checked', true);
         }
@@ -96,12 +97,24 @@ $( document ).ready(function() {
         $('#cards').html('');
         createListPage(id);
     });
+    $("#cards").on('change', ":checkbox", function() {
+        let id = $(this).attr('id');
+        if($(this).hasClass('list_checkbox')){
+            closeList(id);
+        }else{
+            let the_task = getTask(id);
+            the_task.setDone(!the_task.getDone());
+            updateTask(the_task);
+        }
+        
+    });
+    
 
 
 
 
     $("#save_project").click(function (e) { 
-       if(EmptyDate()){
+       if(!EmptyDate(1)){
         $("#project_feedback").css('display','inline-block');
        }else{
 
@@ -151,7 +164,7 @@ $( document ).ready(function() {
 
 
     $('#save_list').on('click',function(e){
-        if(EmptyDate()){
+        if(!EmptyDate(0)){
             $("#list_feedback").css('display','inline-block');
 
         }else{
@@ -186,7 +199,8 @@ $( document ).ready(function() {
                 }
                 updateList(list);
                 clearListModal();
-                createProjectpage();
+                $('#cards').html('');
+                createListPage();
 
     
              }else{
@@ -217,7 +231,7 @@ $( document ).ready(function() {
         }
     });  
     $('#save_task').on('click',function(e){
-        if(EmptyDate()){
+        if(!EmptyDate(2)){
             $("#task_feedback").css('display','inline-block');
 
         }else{
@@ -251,8 +265,12 @@ $( document ).ready(function() {
                 }else{
                    due_date = $("#task_due_date").val();
                 }
-                let task = new task($("#task_name").val(),$("#list_select").val(),due_date,$("#task_priority").val(),$("#task_notes").val());
-                addTask(task);
+                
+                let new_task = new task($("#task_name").val(),$("#list_select").val(),due_date,$("#task_priority").val(),$("#task_notes").val());
+                console.log(new_task);
+                addTask(new_task);
+                cleartaskModal();
+                $('#cards').html('');
                 createListPage();
                 
                 
@@ -311,6 +329,12 @@ $( document ).ready(function() {
      });
 
 
+     $("[id$='_priority']").on('change',function(){
+         
+         
+         setPriority($(this));
+     });
+
 
 
  //end of document ready function   
@@ -356,7 +380,8 @@ function createProjectDetailPage(projectid){
     $('#projectModal').removeAttr("data-id");
     $('#projectModal').modal('hide');
     $("#project_name").val('');
-    $("#project_priority").val('');
+    $("#project_priority").val('2');
+    $("#project_priority_label").val('Medium');
     $("#project_notes").val('');
     $("#project_due_date").val(new Date());
     $("#project_not_required").prop('checked',false);
@@ -368,7 +393,8 @@ function createProjectDetailPage(projectid){
     $('#listModal').removeAttr("data-id");
     $('#listModal').modal('hide');
     $("#list_name").val('');
-    $("#list_priority").val('');
+    $("#list_priority").val('2');
+    $("#list_priority_label").val('Medium');
     $("#list_notes").val('');
     $("#list_due_date").val(new Date());
     $("#list_not_required").prop('checked',false);
@@ -381,7 +407,8 @@ function createProjectDetailPage(projectid){
     $('#taskModal').removeAttr("data-id");
     $('#taskModal').modal('hide');
     $("#task_name").val('');
-    $("#task_priority").val('');
+    $("#task_priority").val('2');
+    $("#task_priority_label").val('Medium');
     $("#task_notes").val('');
     $("#task_due_date").val(new Date());
     $("#task_not_required").prop('checked',false);
@@ -400,15 +427,88 @@ function createProjectDetailPage(projectid){
     createProjectpage();
  });
 
- function EmptyDate(){
-     if(($('#list_not_required').is(":checked")||($('#list_due_date').val()==''))&&($('#task_not_required').is(":checked")||($('#task_due_date').val()==''))&&($('#project_not_required').is(":checked")||($('#project_due_date').val()==''))){
-         return true;
+ function EmptyDate(type){
+     switch (type) {
+        case 0:
+             if($('#list_not_required').is(":checked")||($('#list_due_date').val()!='')){
+                return true;
+             }
+             break;
+        case 1:
+            if($('#project_not_required').is(":checked")||($('#project_due_date').val()!='')){
+                return true;
+             }
+             
+             break;
+        case 2:
+            if($('#task_not_required').is(":checked")||($('#task_due_date').val()!='')){
+                return true;
+             }
+             
+             break;
+     
+         
      }
      return false;
  }
  
  
 
+function setPriority(priority_clicked){  
+    switch (priority_clicked.val()) {
+        case "1":
+            if(priority_clicked.attr('id') =='project_priority' ){
+                $("#project_priority_label").html('Low');
+            }else if(priority_clicked.attr('id') =='list_priority'){
+                $("#list_priority_label").html('Low');
+            }else{
+                $("#task_priority_label").html('Low');
+            }
+            
+            break;
+        case "2":
+            if(priority_clicked.attr('id') =='project_priority' ){
+                $("#project_priority_label").html('Medium');
+            }else if(priority_clicked.attr('id') =='list_priority'){
+                $("#list_priority_label").html('Medium');
+            }else{
+                $("#task_priority_label").html('Medium');
+            }
+            
+            break;
+        case "3":
+            if(priority_clicked.attr('id') =='project_priority' ){
+                $("#project_priority_label").html('High');
+            }else if(priority_clicked.attr('id') =='list_priority'){
+                $("#list_priority_label").html('High');
+            }else{
+                $("#task_priority_label").html('High');
+            }
+            break;
+            
+        case "4":
+            if(priority_clicked.attr('id') =='project_priority' ){
+                $("#project_priority_label").html('Urgent');
+            }else if(priority_clicked.attr('id') =='list_priority'){
+                $("#list_priority_label").html('Urgent');
+            }else{
+                $("#task_priority_label").html('Urgent');
+            }
+           
+            break;
+        default:
+            if(priority_clicked.attr('id') =='project_priority' ){
+                $("#project_priority_label").html('Medium');
+            }else if(priority_clicked.attr('id') =='list_priority'){
+                $("#list_priority_label").html('Medium');
+            }else{
+                $("#task_priority_label").html('Medium');
+            }
+            break;
+    }
+}
 
-
+$(window).on('beforeunload', function(){
+    closeSession();
+ });
  

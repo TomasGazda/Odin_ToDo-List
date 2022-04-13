@@ -7,7 +7,12 @@ import { AllTasks,task,setAllTasks} from "./Task.js";
 
 function CheckifExist(name){
     if(localStorage.getItem(name)){
-        return true;
+        let item = localStorage.getItem(name);
+        let item_lenght = item.length;
+        if(item.length>2){
+            return true;
+        }
+        return false;
     }
     return false;
 }
@@ -15,7 +20,7 @@ function CheckifExist(name){
 function setupLocalStorage(){
     let projects = [];
     let defaultProject = new Project('Default');   
-    projects.push(JSON.stringify(defaultProject));  
+    projects.push(defaultProject);  
     localStorage.setItem("projects",JSON.stringify(projects));
     let lists = [];
     localStorage.setItem("lists",JSON.stringify(lists));
@@ -26,7 +31,7 @@ function setupLocalStorage(){
 }
 
 function checkLocalStorage(){
-    localStorage.clear();
+    //localStorage.clear();
     if(!CheckifExist("projects")){
         setupLocalStorage();
     }
@@ -39,9 +44,9 @@ function getallLists(){
     let JSONLists = JSON.parse(localStorage.getItem("lists"));
     let lists = [];
     for (let index = 0; index < JSONLists.length; index++) {
-        const element = JSON.parse(JSONLists[index]);     
-        let list = new TodoList(element.project,element.name,element.duedate,element.priority,element.notes,element.id);
-        lists.push(list)
+        const element = JSONLists[index];     
+        let list = new TodoList(element.project,element.name,element.dueDate,element.priority,element.note,element.id);
+        lists.push(list);
     }
 
     return lists;
@@ -51,9 +56,9 @@ function getallProjects(){
     let JSONprojects = JSON.parse(localStorage.getItem("projects"));
     let projects = [];
     for (let index = 0; index < JSONprojects.length; index++) {
-        const element = JSON.parse(JSONprojects[index]);     
+        const element = JSONprojects[index];     
         let project = new Project(element.name,element.duedate,element.priority,element.notes,element.id);
-        projects.push(project)
+        projects.push(project);
     }
 
     return projects;
@@ -64,9 +69,9 @@ function getallTasks(){
     let JSONTasks = JSON.parse(localStorage.getItem("tasks"));
     let tasks = [];
     for (let index = 0; index < JSONTasks.length; index++) {
-        const element = JSON.parse(JSONTasks[index]);     
-        let task = new task(element.name,element.todolist,element.duedate,element.priority,element.notes,element.id);
-        tasks.push(task)
+        const element = JSONTasks[index];     
+        let new_task = new task(element.name,element.todolist,element.dueDate,element.priority,element.notes,element.id);
+        tasks.push(new_task);
     }
 
     return tasks;
@@ -78,6 +83,7 @@ function updateTasks(){
 
 }
 function updateLists(){
+    console.log(AllLists);
     localStorage.setItem("lists",JSON.stringify(AllLists));
 
 }

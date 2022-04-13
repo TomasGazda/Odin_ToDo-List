@@ -34,7 +34,7 @@ done;
             return "No Due Date"
         }
        
-        return format(Duedate, 'dd MMM yyyy') ;
+        return format(Duedate, 'yyyy-MM-dd') ;
        
         
        
@@ -96,7 +96,7 @@ function setAllProjects(array){
 }
 function close_project(id){
     let project = getProject(id);
-    project.setProject_Done(true);
+    project.setProject_Done(!project.getProject_Done());
     updateProject(project);
     let lists = getProjectLists(id);
     for (let index = 0; index < lists.length; index++) {

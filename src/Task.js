@@ -46,7 +46,7 @@ class task {
             return "No Due Date"
         }
        
-        return format(Duedate, 'dd MMM yyyy') ;
+        return format(Duedate, 'yyyy-MM-dd') ;
     }
     setdueDate(newDueDate){
         this.dueDate = newDueDate;
@@ -72,7 +72,7 @@ class task {
 }
 
 function addTask(newTask){
-    AllProjects.push(newTask); 
+    AllTasks.push(newTask); 
 
 }
 function getTask(id){

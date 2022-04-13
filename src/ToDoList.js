@@ -43,11 +43,11 @@ class TodoList{
         getListdueDate(){
             const Duedate = new Date(this.dueDate);
         
-        if (Duedate.getFullYear() <= 1970){
+        if (Duedate.getFullYear() <= 1970 || this.dueDate ==""){
             return "No Due Date"
         }
        
-        return format(Duedate, 'dd MMM yyyy') ;
+        return format(Duedate, 'yyyy-MM-dd') ;
         }
         setListDueDate(list_duedate){
             this.dueDate = list_duedate;
@@ -87,7 +87,7 @@ function deleteList(id){
 
 }
 function updateList(List){
-    elementIndex = AllLists.findIndex((obj => obj.id == 1));
+    let elementIndex = AllLists.findIndex((obj => obj.id == List.getListID()));
     AllLists[elementIndex] = List;
 }
 function setAllLists(array){
@@ -103,12 +103,12 @@ function getProjectLists(project){
 }
 function closeList(id){
     let list = getList(id);
-    list.setListDone(true);
+    list.setListDone(!list.getListDone());
     updateList(list)
     let tasks = getListTasks(id);
     for (let index = 0; index < tasks.length; index++) {
         const element = tasks[index];
-        element.setDone(true);
+        element.setDone(!element.getDone());
         updateTask(element);
         
     }

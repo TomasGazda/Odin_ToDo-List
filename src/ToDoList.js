@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
-import { AllTasks,getListTasks } from './Task';
+import { AllTasks,getListTasks,getDateTask,getUrgentTask} from './Task';
 import format from 'date-fns/format'
 
 let AllLists = [];
@@ -112,8 +112,17 @@ function closeList(id){
         updateTask(element);
         
     }
-
+}
+function getDateList(lookupDate){
+    let set = getDateTask(lookupDate);
+    let lists = AllLists.filter(obj => set.has(obj.id));
+    return lists;
+}
+function getUrgentList(){
+    let set = getUrgentTask();
+    let lists = AllLists.filter(obj => set.has(obj.id));
+    return lists;
 
 }
 
-export {TodoList,AllLists,addList,getList,deleteList,updateList,setAllLists,getProjectLists,closeList};
+export {TodoList,AllLists,addList,getList,deleteList,updateList,setAllLists,getProjectLists,closeList,getDateList,getUrgentList};

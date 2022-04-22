@@ -30,7 +30,7 @@ done;
     getProject_DueDate(){
         const Duedate = new Date(this.duedate);
         
-        if (Duedate.getFullYear() <= 1970){
+        if (Duedate.getFullYear() <= 1970 || this.duedate ==""){
             return "No Due Date"
         }
        

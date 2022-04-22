@@ -42,7 +42,7 @@ class task {
     getdueDate(){
         const Duedate = new Date(this.dueDate);
         
-        if (Duedate.getFullYear() <= 1970){
+        if (Duedate.getFullYear() <= 1970|| this.dueDate ==""){
             return "No Due Date"
         }
        
@@ -101,4 +101,16 @@ function getListTasks(list){
     return result;
     
 }
-export{task,AllTasks,addTask,getTask,deleteTask,updateTask,setAllTasks,getListTasks};
+function getDateTask(lookupDate){
+    let tasks = AllTasks.filter(obj => new Date(obj.dueDate).getTime() <= lookupDate.getTime() && new Date(obj.dueDate).getTime()>0);
+    let lists = tasks.map(obj => {return obj.todolist});
+    return new Set(lists);
+
+}
+function getUrgentTask(){
+    let tasks = AllTasks.filter(obj => obj.priority == 4);
+    let lists = tasks.map(obj => {return obj.todolist});
+    return new Set(lists);
+
+}
+export{task,AllTasks,addTask,getTask,deleteTask,updateTask,setAllTasks,getListTasks,getDateTask,getUrgentTask};

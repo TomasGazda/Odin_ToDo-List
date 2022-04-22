@@ -2,10 +2,11 @@ import { checkLocalStorage,closeSession} from "./datamanamegent.js";
 import "./assets/style.css";
 import {createListCard,create_list_options,createListitem} from "./DOM_create_list.js";
 import {createProjectCard,create_project_options} from "./DOM_create_project.js";
-import { createTaskElement } from "./DOM_create_task.js";
-import {AllLists,getList,TodoList,updateList,addList,closeList,getProjectLists} from "./ToDoList.js";
+import {AllLists,getList,TodoList,updateList,addList,closeList,getProjectLists,getDateList,getUrgentList} from "./ToDoList.js";
 import {AllProjects,getProject,Project,updateProject,addProject,close_project} from "./project.js";
-import {task,getTask,updateTask,addTask} from './Task.js'
+import {task,getTask,updateTask,addTask} from './Task.js';
+import Icon from './assets/notepad.png';
+
 
 
 
@@ -15,10 +16,9 @@ import {task,getTask,updateTask,addTask} from './Task.js'
 
 
 $( document ).ready(function() {
-    checkLocalStorage();
-    createListPage();
-    create_project_options(document.getElementById('project_select'));
-    create_list_options(document.getElementById('list_select'));
+    setPage();
+    
+
     $("#cards").on('click', ".update_project", function() {
         let id = $(this).closest('.card').attr('data-id');
         let project = getProject(id);
@@ -92,6 +92,7 @@ $( document ).ready(function() {
         $('#cards').html('');
         createProjectDetailPage(id);
     });
+
     $("#cards").on('click', ".detail_list", function() {
         let id = $(this).closest('checkbox').id;
         $('#cards').html('');
@@ -151,7 +152,7 @@ $( document ).ready(function() {
             let project = new Project($("#project_name").val(),due_date,$("#project_priority").val(),$("#project_notes").val())
             addProject(project);
             clearProjectModal();
-            $('#cards').html('');
+            cleanCards();
             createProjectpage();
             
 
@@ -199,7 +200,7 @@ $( document ).ready(function() {
                 }
                 updateList(list);
                 clearListModal();
-                $('#cards').html('');
+                cleanCards();
                 createListPage();
 
     
@@ -270,8 +271,9 @@ $( document ).ready(function() {
                 console.log(new_task);
                 addTask(new_task);
                 cleartaskModal();
-                $('#cards').html('');
+                cleanCards();
                 createListPage();
+                
                 
                 
                
@@ -345,32 +347,62 @@ $( document ).ready(function() {
 
 
 function createProjectpage(id =0){
+    $('#cards').html('');
+    $('#cards').masonry('destroy');
+    
     for (let index = 0; index < AllProjects.length; index++) {
         const element = AllProjects[index];
-        if((id ==0 && element.getProject_Done()== false) || (id!=0 && id==element.getProject_ID())){
-            $('#cards').append(createProjectCard (element));   
+        if((id ==0 ) || (id!=0 && id==element.getProject_ID())){
+            
+            var $content = $(createProjectCard(element));   
+            $('#cards').append($content);    
         }
     }
-
+    $('#cards').masonry({
+        itemSelector: '.grid-item',
+        percentPosition: true
+     });
+    
 }
 
 function createListPage(id=0){
+    $('#cards').masonry('destroy');
+    $('#cards').html('');
+    
+
     for (let index = 0; index < AllLists.length; index++) {
         const element = AllLists[index];
-        if((id ==0 && element.getListDone()==false) || (id !=0 && element.getListID()==id)){
-            $('#cards').append(createListCard (element));   
+        if((id ==0) || (id !=0 && element.getListID()==id)){
+            var $content = $(createListCard (element,1));   
+            $('#cards').append($content);    
         }
     }
+    $('#cards').masonry({
+        itemSelector: '.grid-item',
+        percentPosition: true
+     });
+    
 }
 
 function createProjectDetailPage(projectid){
+    $('#cards').masonry('destroy');
+    $('#cards').html('');
+    
+
     let lists_project = getProjectLists(projectid);
     for (let index = 0; index < lists_project.length; index++) {
-        const element = lists_project[index];    
-        $('#cards').append(createListCard (element));   
+        const element = lists_project[index]; 
+        var $content = $(createListCard (element));   
+        $('#cards').append($content);  
+       
     }
+    $('#cards').masonry({
+        itemSelector: '.grid-item',
+        percentPosition: true
+     });
+    
 
-
+    
 }
 
 
@@ -417,15 +449,52 @@ function createProjectDetailPage(projectid){
 
  }
 
- $('#list_view').on('click',function(){
-    $('#cards').html('');
+ $("[id^='list_view']").on('click',function(){
+    cleanCards();
     createListPage();
+    
  });
 
- $('#project_view').on('click',function(){
-    $('#cards').html('');
+ $("[id^='project_view']").on('click',function(){
+    cleanCards();
     createProjectpage();
  });
+
+ $("[id^='todays_tasks']").on('click',function(){
+    $('#cards').masonry('destroy');
+    $('#cards').html('');
+    let result = getDateList(new Date());
+    for (let index = 0; index < result.length; index++) {
+        const element = result[index];
+        var $content = $(createListCard (element,3));   
+         $('#cards').append($content);    
+        
+    }
+    $('#cards').masonry({
+        itemSelector: '.grid-item',
+        percentPosition: true
+     });
+
+ });
+ $("[id^='urgent_tasks']").on('click',function(){
+    $('#cards').masonry('destroy');
+    $('#cards').html('');
+    let result = getUrgentList();
+    for (let index = 0; index < result.length; index++) {
+        const element = result[index];
+        var $content = $(createListCard (element,2));   
+         $('#cards').append($content);    
+        
+    }
+    $('#cards').masonry({
+        itemSelector: '.grid-item',
+        percentPosition: true
+     });
+
+ });
+
+
+
 
  function EmptyDate(type){
      switch (type) {
@@ -511,4 +580,22 @@ function setPriority(priority_clicked){
 $(window).on('beforeunload', function(){
     closeSession();
  });
+
+ function cleanCards(){
+    
+     
+
+ }
+
+ function setPage(){
+    $('#cards').masonry({
+        itemSelector: '.grid-item',
+        percentPosition: true
+     });
+    $("#icon").attr("src",Icon);
+    checkLocalStorage();
+    createListPage();
+    create_project_options(document.getElementById('project_select'));
+    create_list_options(document.getElementById('list_select'));
+ }
  

@@ -7,7 +7,7 @@ import { createListitem } from "./DOM_create_list";
 
 function createProjectCard(project){
     let container = document.createElement("div");
-    container.classList.add("col-sm-12", "col-md-6", "col-lg-4", "bg-transparent", "justify-content-center");
+    container.classList.add("col-sm-12", "col-md-6", "col-lg-4", "bg-transparent","grid-item");
     let card = document.createElement("div");
     let card_body = document.createElement('div');
     let list = document.createElement('ul');

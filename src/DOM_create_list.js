@@ -1,19 +1,28 @@
 
-import { TodoList,AllLists } from "./ToDoList"
+import { TodoList,AllLists} from "./ToDoList"
 import { getListTasks,task } from "./Task";
 import { createTaskElement } from "./DOM_create_task";
 import { getProject,Project } from "./project";
 import { addDays, format } from 'date-fns/fp'
 
-function createListCard(ToDoList){
+//option 1 ... all list tasks
+//option 2 ... all urgent list tasks
+//option 3 ... all list tasks due set date
+
+
+function createListCard(ToDoList,task_option = 1,lookdate=new Date()){
+
     let container = document.createElement("div");
-    container.classList.add("col-sm-12", "col-md-6", "col-lg-4", "bg-transparent", "d-flex", "justify-content-center");
+    container.classList.add("col-sm-12", "col-md-6", "col-lg-4", "bg-transparent","grid-item");
     let card = document.createElement("div");
     let card_body = document.createElement('div');
     let list = document.createElement('ul');
     card.classList.add("card");
     card.setAttribute("data-id",ToDoList.getListID());
     card.setAttribute("data-type",'list');
+    if(ToDoList.getListDone()){
+        card.classList.add("border","border-success","border-4","rounded");
+    }
     card_body.classList.add("card-body");
     list.classList.add("list-group","list-group-flush");
     list.id = 'tasks_'+ToDoList.getListID();
@@ -43,11 +52,16 @@ function createListCard(ToDoList){
     
     `;
 
-    let tasks = getListTasks(ToDoList.getListID());
+    let tasks = getListTasks(ToDoList.getListID()); 
+    
     for (let index = 0; index < tasks.length; index++) {
         const element = tasks[index];
-        let item = createTaskElement(element);
-        list.appendChild(item);
+        if((task_option==2 && element.priority == 4)||(task_option==3 && new Date(element.dueDate).getTime()<=lookdate.getTime() &&new Date(element.dueDate).getTime()>0) ||(task_option==1)){
+            
+            let item = createTaskElement(element);
+            list.appendChild(item);
+        }
+        
     }
     card_body.appendChild(list);
     card.appendChild(card_body);
@@ -60,6 +74,7 @@ function createListCard(ToDoList){
 
 function createListitem(List){
     let item = document.createElement('li');
+    
     let container = document.createElement('div');
     let form = document.createElement('div');
     let checkbox = document.createElement('input');

@@ -38,8 +38,7 @@ body{
 
 }
 #cards{
-    
-    
+    min-width: 100%;
     margin:0 !important;
     padding:0 !important;
 }
@@ -56,16 +55,41 @@ body{
 .dropdown-toggle::after {
     content: none;
 }
+#todays_tasks_navbar{
+    display: none;
+}
+#week_tasks_navbar{
+    display: none;
+}
+#urgent_tasks_navbar{
+    display: none;
+}
+#list_view_navbar{
+    display: none;
+}
+#project_view_navbar{
+    display: none;
+}
+
+
 
 @media (max-width: 767.98px) { 
+    #content{
+        margin:0 !important;
+        padding:0 !important;
+        width: 100vw;
+        height: 100vh;
+        
+        
+        display: block;
+        overflow-y: scroll;
+    }
+    
     #sidebar{
         display: none;
     }
     #main{
-        grid-column-start: 1;
-        grid-column-end: 3;
-        grid-row-start: 2;
-        grid-row-end: 3;
+        display: block;
     
     }
 
@@ -74,5 +98,20 @@ body{
     }
     .card{
         width:100%;
+    }
+    #todays_tasks_navbar{
+        display: block;
+    }
+    #week_tasks_navbar{
+        display: block;
+    }
+    #urgent_tasks_navbar{
+        display: block;
+    }
+    #list_view_navbar{
+        display: block;
+    }
+    #project_view_navbar{
+        display: block;
     }
  }
